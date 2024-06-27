@@ -1,0 +1,58 @@
+version: '3.7'
+
+services:
+  backend:
+    image: "abxregistry.azurecr.io/sgdecoding-backend:v1.0"
+    ports:
+      - "2000:2000"
+      - "8080:8080"
+      - "8081:8081"
+    environment:
+      # DB_CONNECTION_STRING: "mongodb://mongodb-app:27017/myapp"
+      - PORT=2000
+      - PROXY_PORT=8080
+      - QUILLJS_PORT=8081
+      - APP_ID=6678cfd1b3df8606c564c44c
+      - APP_SECRET=ab4c0aa97a12f36c6884e39bef82e23dd006b88f69dc4a90a30fc63f11d52d31
+      - DB_CONNECTION_STRING=mongodb://mongodb-app:27017/myapp
+      - GATEWAY_URL=https://gateway.speechlab.sg
+      - GATEWAY_SOCKET_URL=wss://gateway.speechlab.sg
+      - LIVE_TRANSCRIBE_QUOTA=60
+      - OFFLINE_TRANSCRIBE_QUOTA=60
+      # DB_CONNECTION_STRING: "mongodb://root:Ln0tT9Vs9c@mongodbv5-0.mongodbv5-headless.speech-gateway.svc.cluster.local:27017,mongodbv5-1.mongodbv5-headless.speech-gateway.svc.cluster.local:27017,mongodbv5-2.mongodbv5-headless.speech-gateway.svc.cluster.local:27017/SG_Decoding?retryWrites=true&w=majority"
+      # DB_CONNECTION_STRING: "mongodb://root:Ln0tT9Vs9c@mongodbv5-0.mongodbv5-headless.speech-gateway.svc.cluster.local:27017/SG_Decoding?authSource=admin&retryWrites=true&w=majority"
+    networks:
+      - sgdecodenet
+    depends_on: 
+      - mongodb-app
+    links:
+      - mongodb-app
+
+  mongodb-app:
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:  
+      - mongo:/data/db
+    networks:
+      - sgdecodenet
+
+  frontend:
+    image: "abxregistry.azurecr.io/sgdecoding-frontend:v1.0"
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API="http://localhost:2000"
+      - REACT_APP_SOCKETAPI="http://localhost:8080"
+      - REACT_APP_LIVE_WSS="wss://gateway.speechlab.sg"
+    networks:
+      - sgdecodenet
+  
+networks:
+  sgdecodenet:
+    driver: bridge
+volumes:
+  mongo: 
+  
+

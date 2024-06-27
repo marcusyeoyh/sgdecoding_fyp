@@ -1,0 +1,107 @@
+{
+    "taskDefinitionArn": "arn:aws:ecs:ap-southeast-2:861814105207:task-definition/sgdecoding-frontend:1",
+    "containerDefinitions": [
+        {
+            "name": "frontend",
+            "image": "861814105207.dkr.ecr.ap-southeast-2.amazonaws.com/sg_decoding_frontend:latest",
+            "cpu": 0,
+            "portMappings": [
+                {
+                    "containerPort": 3000,
+                    "hostPort": 3000,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true,
+            "environment": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "dependsOn": [
+                {
+                    "containerName": "Frontend_ResolvConf_InitContainer",
+                    "condition": "SUCCESS"
+                }
+            ],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/docker-compose/sgdecoding",
+                    "awslogs-region": "ap-southeast-2",
+                    "awslogs-stream-prefix": "sgdecoding"
+                }
+            }
+        },
+        {
+            "name": "Frontend_ResolvConf_InitContainer",
+            "image": "docker/ecs-searchdomain-sidecar:1.0",
+            "cpu": 0,
+            "portMappings": [],
+            "essential": false,
+            "command": [
+                "ap-southeast-2.compute.internal",
+                "sgdecoding.local"
+            ],
+            "environment": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/docker-compose/sgdecoding",
+                    "awslogs-region": "ap-southeast-2",
+                    "awslogs-stream-prefix": "sgdecoding"
+                }
+            }
+        }
+    ],
+    "family": "sgdecoding-frontend",
+    "executionRoleArn": "arn:aws:iam::861814105207:role/sgdecoding-speech2text-po-FrontendTaskExecutionRol-GFQISFX0XINP",
+    "networkMode": "awsvpc",
+    "revision": 1,
+    "volumes": [],
+    "status": "ACTIVE",
+    "requiresAttributes": [
+        {
+            "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+        },
+        {
+            "name": "ecs.capability.execution-role-awslogs"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.ecr-auth"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+        },
+        {
+            "name": "ecs.capability.container-ordering"
+        },
+        {
+            "name": "ecs.capability.execution-role-ecr-pull"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+        },
+        {
+            "name": "ecs.capability.task-eni"
+        }
+    ],
+    "placementConstraints": [],
+    "compatibilities": [
+        "EC2",
+        "FARGATE"
+    ],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "256",
+    "memory": "512",
+    "registeredAt": "2023-03-21T06:26:45.478Z",
+    "registeredBy": "arn:aws:iam::861814105207:user/aileen",
+    "tags": [
+        {
+            "key": "com.docker.compose.project",
+            "value": "sgdecoding"
+        }
+    ]
+}

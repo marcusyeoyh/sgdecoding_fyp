@@ -1,0 +1,51 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "db": "nodemon index.js",
+    "ws": "nodemon webSocket.js",
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/compression": "^1.7.2",
+    "axios": "^0.24.0",
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.2",
+    "form-data": "^4.0.0",
+    "http-proxy": "^1.18.1",
+    "http-proxy-middleware": "^2.0.1",
+    "https-proxy-agent": "^5.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "jwt-decode": "^3.1.2",
+    "mongodb": "^4.2.2",
+    "mongoose": "^6.1.7",
+    "multer": "^1.4.4",
+    "node-fetch": "^2.6.8",
+    "node-uuid": "^1.4.8",
+    "nodemailer": "^6.8.0",
+    "react-markdown": "^8.0.3",
+    "uuid": "^9.0.0",
+    "ws": "^8.4.0",
+    "yauzl": "^2.10.0"
+  },
+  "devDependencies": {
+    "jest": "^29.5.0",
+    "markdown-to-quill-delta": "^0.7.0",
+    "nodemon": "^2.0.15",
+    "quill-ot": "^1.0.1",
+    "rich-text": "^4.1.0",
+    "sharedb": "^3.2.1",
+    "sharedb-mongo": "^2.0.0",
+    "socket.io": "^4.5.4",
+    "supertest": "^6.3.3",
+    "websocket-json-stream": "^0.0.3"
+  }
+}

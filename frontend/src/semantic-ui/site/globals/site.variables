@@ -1,0 +1,6 @@
+/*******************************
+     User Global Variables
+*******************************/
+@secondaryColor: #FF4438;
+@primaryGradient: background: linear-gradient(134.72deg, #166BEA 0%, #6F3BDD 99.54%);
+@testColor: #FE32AB;

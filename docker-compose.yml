@@ -1,0 +1,44 @@
+version: '3.7'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: ./Dockerfile
+    image: "sgdecoding_backend"
+    environment:
+      MONGO_URL: "mongodb://mongodb-app:27017/myapp"
+    ports:
+      - "2000:2000"
+      - "8081:8080"
+    networks:
+      - sgdecodenet
+    depends_on: 
+      - mongodb-app
+    links:
+      - mongodb-app
+  mongodb-app:
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:  
+      - mongo:/data/db
+    networks:
+      - sgdecodenet
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile
+    image: "sgdecoding_frontend"
+    ports:
+      - "3000:3000"
+    networks:
+      - sgdecodenet
+  
+networks:
+  sgdecodenet:
+    driver: bridge
+volumes:
+  mongo: 

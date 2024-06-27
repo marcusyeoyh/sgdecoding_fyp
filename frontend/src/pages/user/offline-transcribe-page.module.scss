@@ -1,0 +1,110 @@
+#offlineTranscribePg {
+	#introSection {
+		padding-top: 36px;
+		padding-bottom: 36px;
+		border-radius: 24px;
+		background: #ffe2b7;
+	}
+
+	#uploadFileContainer {
+		margin-top: 48px;
+		// padding: 0px 24px;
+	}
+
+	#listItemRow{
+		justify-content: flex-start;
+	}
+
+	#uploadesenGridListHeader {
+		margin-top: 18px;
+		// border-bottom: 1px solid gray;
+	}
+
+	.mobileGridListHeader{
+		display: none;
+	}
+
+	#noFileChosenMsg {
+		font-style: italic;
+		color: rgb(252, 136, 53);
+		margin-top: 36px;
+	}
+
+	.channelControlBtn{
+		display: block;
+		min-width: 150px;
+
+		// > * {
+		// }
+
+		div{
+			margin-right: 8px;
+			display:inline-block;
+			line-height: 24px;
+		}
+
+		span:nth-child(2){
+			display:inline-block;
+			line-height: 24px;
+			vertical-align: super;
+		}
+	}
+
+	#chooseFileBtn {
+		margin: 36px auto;
+		width: 200px;
+	}
+
+	#uploadBtn {
+		float: right;
+		// margin-right: 200px;
+	}
+
+	.progressBars{
+		margin-top: 16px;
+	}
+}
+
+// @media screen and (min-width: 769px){
+// }
+
+@media screen and (max-width: 767px) {
+	#offlineTranscribePg {
+		#uploadGridListHeader {
+			display: none;
+		}
+
+		div.mobileGridListItem{
+			display:block;
+
+			:nth-last-child(1){
+				color: green;
+				// width: 50%;
+				// float:left;
+			// 	margin-right: auto;
+			}
+		}
+
+		span.mobileGridListHeader {
+			display: inline-block;
+			text-decoration: underline;
+			margin-right: 24px;
+			font-weight: bold;
+			width: 88px;
+		}
+	}
+}
+
+@media screen and (max-width: 425px){
+	#offlineTranscribePg {
+		div.mobileGridListItem{
+			> :nth-last-child(1){
+				float: left;
+			}
+		}
+		span.mobileGridListHeader {
+			text-align: end;
+			float: left;
+		}
+	}
+}

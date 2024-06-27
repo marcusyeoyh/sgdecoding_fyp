@@ -1,0 +1,97 @@
+#recordBtnContainer {
+	cursor: pointer; // Fake a button
+
+	#recordBtn {
+		i:nth-child(1) {
+			background: linear-gradient(134.72deg, #166bea 0%, #6f3bdd 99.54%);
+			-webkit-text-fill-color: transparent;
+			border-radius: 72px;
+			border: 0px solid rgba(0, 0, 0, 0);
+			animation: recordGlowAnim 1.5s infinite alternate;
+		}
+		i:nth-child(2) {
+			color: white;
+			left: 49%;
+		}
+	}
+
+	#recordBtnDisabled {
+		cursor: default;
+		i:nth-child(1) {
+			background: #666;
+			-webkit-text-fill-color: transparent;
+			border-radius: 72px;
+			border: 0px solid rgba(0, 0, 0, 0);
+		}
+		i:nth-child(2) {
+			color: #ddd;
+			left: 49%;
+		}
+	}
+
+	#stopBtn {
+		i:nth-child(1) {
+			background-color: #ff4438;
+			-webkit-text-fill-color: transparent;
+			border-radius: 72px;
+			border: 0px solid rgba(0, 0, 0, 0);
+			animation: stopGlowAnim 1.5s infinite alternate;
+		}
+		i:nth-child(2) {
+			color: white;
+			left: 50%;
+			top: 50%;
+			font-size: 135%;
+		}
+		span {
+			position: absolute;
+			left: 27%;
+			top: 70%;
+			font-size: 0.55em;
+			color: white;
+		}
+	}
+
+	#redoBtn {
+		font-size: 1.9em;
+		margin-bottom: 16px;
+
+		i:nth-child(1) {
+			-webkit-text-fill-color: transparent;
+			border-radius: 80px;
+			border: 6px solid #21ba45;
+			animation: redoGlowAnim 1.5s infinite alternate;
+		}
+		i:nth-child(2) {
+			color: #21ba45;
+			left: 49%;
+		}
+	}
+}
+
+@keyframes recordGlowAnim {
+	from {
+		box-shadow: 0 0 6px -6px #468df8;
+	}
+	to {
+		box-shadow: 0 0 6px 6px #468df8;
+	}
+}
+
+@keyframes stopGlowAnim {
+	from {
+		box-shadow: 0 0 4px -4px #fc7777;
+	}
+	to {
+		box-shadow: 0 0 4px 4px #fd8989;
+	}
+}
+
+@keyframes redoGlowAnim {
+	from {
+		box-shadow: 0 0 6px -6px #71bf83;
+	}
+	to {
+		box-shadow: 0 0 6px 6px #77c489;
+	}
+}

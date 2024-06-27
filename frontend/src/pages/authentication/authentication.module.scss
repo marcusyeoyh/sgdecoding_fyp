@@ -1,0 +1,145 @@
+#authContainer {
+	height: 100vh;
+	// max-height: 900px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	margin: 0 auto;
+	overflow-y: overlay;
+	overflow-x: hidden;
+
+	#authContainerGrid {
+		position: relative;
+		top: 10%;
+		// margin: auto;
+	}
+
+	#authCard {
+		width: 600px;
+		padding: 20px;
+		box-shadow: 0px 1px 3px 0px #d4d4d5, 0px 0px 0px 1px #d4d4d5;
+
+		.cardHeader {
+			text-align: left;
+			margin-left: 16px;
+			margin-bottom: 24px;
+
+			img {
+				display: block;
+				width: 329px;
+				height: 48px;
+				margin: 32px auto 32px auto;
+			}
+
+			h1 {
+				margin-bottom: 0px;
+			}
+
+			#blockDivider {
+				height: 8px;
+				width: 90px;
+				margin-top: 8px;
+				background: linear-gradient(134.72deg, #166bea 0%, #6f3bdd 99.54%);
+			}
+		}
+
+		.mainActionBtn {
+			margin-top: 24px;
+			width: 280px;
+		}
+
+		.mainActionShortBtn {
+			margin-top: 24px;
+			width: 200px;
+		}
+
+		.goBackBtn {
+			margin-top: 8px;
+			width: 280px;
+		}
+	}
+
+	#ackContainer {
+		// margin: auto;
+
+		#acknow {
+			height: 107px;
+			width: 400px;
+			margin: 0 auto;
+			// position: relative;
+			// top: 23%;
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: space-between;
+			column-gap: 12px;
+			// border: 1px solid #ccc;
+			background-color: #fff;
+			border-radius: 8px 8px 0px 0px;
+			padding: 16px 24px;
+			box-shadow: 0px 1px 3px 0px #d4d4d5, 0px 0px 0px 1px #d4d4d5;
+
+			p {
+				width: 100%;
+				display: inline-block;
+				font-style: italic;
+				color: #888;
+				margin-bottom: 2px;
+			}
+
+			a {
+				margin: auto;
+			}
+
+			img {
+				filter: grayscale(100%);
+				transition: filter 0.3s linear 0s;
+			}
+
+			img:hover {
+				filter: grayscale(0%);
+			}
+		}
+	}
+}
+
+#forgotPasswordLink {
+	display: inline-block;
+	margin-top: 8px;
+}
+
+#privacyAndTermsLink {
+	display: inline-block;
+	margin-top: 8px;
+}
+
+@media screen and (max-width: 480px) {
+	#authContainer {
+		width: 360px;
+
+		#authCard {
+			box-shadow: none;
+		}
+
+		#ackContainer {
+			#acknow {
+				box-shadow: none;
+				width: 100%;
+				padding: 16px 12px;
+				a{
+					width: 20%;
+				}
+			}
+		}
+	}
+}
+
+@media screen and (max-height: 800px){
+	#authContainer{
+		min-height: 750px;
+		max-height: 100vh;
+
+		#authContainerGrid {
+			top: 5%;
+		}
+	}
+}

@@ -1,0 +1,175 @@
+#welcomeSection {
+	h1 {
+		margin-bottom: 40px;
+
+		span {
+			background: linear-gradient(134.72deg, #166bea 0%, #6f3bdd 99.54%);
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+		}
+	}
+
+	#welcomeCard {
+		background-color: #fef7ba;
+		box-shadow: 0px 6px 4px rgba(0, 0, 0, 0.25);
+		border-radius: 20px;
+
+		#welcomeCardContent {
+			display: flex;
+
+			#welcomeTextWrapper {
+				display: flex;
+				flex-direction: column;
+				min-height: 168px;
+				max-width: 54%;
+				padding: 16px 24px;
+				z-index:2;
+
+				p {
+					margin-bottom: 16px;
+				}
+
+				#welcomeBtnContainer {
+					display: flex;
+
+					#liveTransBtn {
+						margin-right: 20px;
+						// margin-bottom: 12px;
+					}
+				}
+			}
+
+			img {
+				position: absolute;
+				bottom: -5px;
+				right: 22px;
+				z-index:1;
+			}
+		}
+	}
+}
+
+#overviewSection {
+	margin-top: 56px;
+
+	h2 {
+		margin-bottom: 24px;
+	}
+
+	#overviewCardGroup {
+		min-width: "500px";
+
+		.overviewCardContent {
+			> i > i {
+				font-size: 1.5em;
+			}
+
+			> i > i:nth-child(2) {
+				font-size: 0.6em;
+				// color: #fdfdfd;
+			}
+
+			div {
+				margin-left: 12px;
+			}
+
+			div:nth-child(2) {
+				font-weight: bolder;
+			}
+		}
+
+		.purpIcon {
+			:nth-child(1) {
+				color: #d2c0ff;
+			}
+			:nth-child(2) {
+				color: #6f3bdd;
+			}
+		}
+
+		.blueIcon {
+			:nth-child(1) {
+				color: #addcff;
+			}
+			:nth-child(2) {
+				color: #2987cd;
+			}
+		}
+
+		.redIcon {
+			:nth-child(1) {
+				color: #ffc1d8;
+			}
+			:nth-child(2) {
+				color: #ff4438;
+			}
+		}
+	}
+}
+
+#monthlyUsageStats {
+	margin-top: 64px;
+
+	h2 {
+		margin-bottom: 24px;
+	}
+}
+
+@media screen and (max-width: 1200px) {
+}
+
+@media screen and (max-width: 992px) {
+	#welcomeSection #welcomeCard #welcomeCardContent {
+		display: block;
+
+		#welcomeTextWrapper {
+			text-align: center;
+			max-width: 100%;
+			position: relative;
+
+			#welcomeBtnContainer{
+				margin: 0 auto;
+			}
+		}
+		img {
+			opacity: 0.125;
+		}
+	}
+
+	#overviewSection #overviewCardGroup {
+		.overviewCard {
+			min-width: 500px;
+			max-width: 500px;
+		}
+
+		.overviewCardContent {
+			i {
+				font-size: 3em;
+
+				> i:nth-child(2) {
+					left: 32px;
+				}
+			}
+			div {
+				margin-left: 4px;
+				// font-size: 1rem !important;
+				// overflow-x: hidden;
+			}
+			div:nth-child(2) {
+				font-weight: bold;
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 480px) {
+	#welcomeSection h1{
+		font-size: 1.7rem;
+	}
+
+	#welcomeSection #welcomeCard #welcomeCardContent {
+		img {
+			left: 10px;
+		}
+	}
+}

@@ -1,0 +1,22 @@
+#particlesContainer{
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	background-color: #3ADE8F;
+	z-index: -20;
+	animation: bganim 60s infinite;
+}
+
+@keyframes bganim {
+	0% {background-color: #767676}
+  10% {background-color: #F0712C}
+	20% {background-color: #f9bc2e}
+	30% {background-color: #b5ca31}
+	40% {background-color: #2db84b}
+	50% {background-color: #1cb5ac}
+	60% {background-color: #2987cd}
+	70% {background-color: #643cc6}
+	80% {background-color: #a23bc5}
+	90% {background-color: #de3e96}
+	100% {background-color: #767676}
+}

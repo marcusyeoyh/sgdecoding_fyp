@@ -1,0 +1,86 @@
+.historyItemIcon {
+	// float: left;
+
+	i:nth-child(1) {
+		background: linear-gradient(134.72deg, #166bea 0%, #6f3bdd 99.54%);
+		-webkit-background-clip: text;
+		-moz-background-clip: text;
+		background-clip: text;
+		-webkit-text-fill-color: transparent;
+		font-size: 2em;
+
+		&.historyItemIconError {
+			background: orangered;
+			-webkit-background-clip: text;
+			-moz-background-clip: text;
+			background-clip: text;
+			-webkit-text-fill-color: transparent;
+		}
+	}
+
+	i:nth-child(2) {
+		color: white;
+		font-size: 0.9em;
+		left: 48%;
+	}
+}
+
+#cardTopSection {
+	display: flex;
+	justify-content: flex-start;
+	gap: 8px;
+
+	#cardHeaderMetaContainer{
+		margin: auto 0;
+	}
+
+	#cardHeader {
+		font-size: 1.2em;
+		font-weight: bold;
+		line-height: 1.2em;
+	}
+
+	#downloadBtn {
+		height: 36px;
+	}
+}
+
+#transcriptPlayback {
+	min-height: 200px;
+	font-size: 1.3rem;
+
+	.isPlayingThis{
+		font-weight: bold;
+		color: #166bea;
+		// text-decoration: underline;
+	}
+}
+
+#audioControls {
+	#playbackSpeedDropdown {
+		width: 10% !important;
+
+		& :nth-child(1) {
+			padding-right: 0px;
+			min-width: 36px;
+			text-align: center;
+		}
+	}
+
+	#playbackProgress {
+		height: 5px;
+		// background: linear-gradient(to right, #3991da 0%, #3991da 50%, #3b3b3b 50%, #5e5e5e 100%);
+		-webkit-appearance: none;
+		width: 100%;
+		border-radius: 40px;
+		cursor: pointer;
+	}
+
+	#volumeControl {
+		-webkit-appearance: slider-vertical;
+	}
+
+	.vAlignMiddle {
+		margin: auto 0;
+	}
+}

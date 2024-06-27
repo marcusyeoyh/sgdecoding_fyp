@@ -1,0 +1,5 @@
+SGDecoding Google OAuth client
+
+Client ID = 831721022373-n5krooo1p1ba9fa0c70nssmpc7lr4sho.apps.googleusercontent.com
+Client Secret =  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
+

@@ -1,0 +1,48 @@
+#menuContainer {
+	margin-bottom: 0px !important;
+}
+
+#sidebarBtn i{
+	margin: 0px;
+}
+
+#sidebarBtn::before{
+	background: none !important;
+}
+
+#sidebarBtn:hover{
+	background: rgba(0, 0, 0, 0.03);
+}
+
+#logo {
+	padding-top: 15px;
+	padding-bottom: 12px;
+	// margin-left: auto;
+
+	img {
+		width: 15.5em;
+	}
+}
+
+#logo::before{
+	background: none !important;
+}
+
+
+@media screen and (max-width: 480px) {
+	#menuContainer {
+		justify-content: space-between;
+	}
+	#logo{
+		margin-left: 0px !important;
+
+		img{
+			width: 10em;
+		}
+	}
+
+	#profileDropdown{
+		font-size:0.7em;
+		margin-left: 0px !important;
+	}
+}
