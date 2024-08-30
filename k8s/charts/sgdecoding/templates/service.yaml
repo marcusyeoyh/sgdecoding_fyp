@@ -1,0 +1,41 @@
+---
+apiVersion: {{ template "sgdecoding.service.apiVersion" . }}
+kind: Service
+metadata:
+  name: {{ template "sgdecoding.frontend.fullname" . }}
+{{ include "sgdecoding.namespace" . | indent 2 }}
+  labels:
+{{- include "sgdecoding.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.frontend.service.type }}
+  ports:
+    - port: {{ .Values.frontend.service.servicePort }}
+{{- if eq .Values.frontend.service.type "ClusterIP" }}
+      targetPort: {{ .Values.frontend.service.targetPort }}
+{{- end }}
+      protocol: {{ .Values.frontend.service.protocol }}
+{{- if eq .Values.frontend.service.type "ClusterIP" }}
+      name: {{ .Values.frontend.service.name }}
+{{- end }}
+  selector: {{- include "sgdecoding.frontend.matchLabels" . | nindent 4 }}
+
+---
+apiVersion: {{ template "sgdecoding.service.apiVersion" . }}
+kind: Service
+metadata:
+  name: {{ template "sgdecoding.backend.fullname" . }}
+{{ include "sgdecoding.namespace" . | indent 2 }}
+  labels:
+{{- include "sgdecoding.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.backend.service.type }}
+  ports:
+    - port: {{ .Values.backend.service.servicePort }}
+{{- if eq .Values.backend.service.type "ClusterIP" }}
+      targetPort: {{ .Values.backend.service.targetPort }}
+{{- end }}
+      protocol: {{ .Values.backend.service.protocol }}
+{{- if eq .Values.backend.service.type "ClusterIP" }}
+      name: {{ .Values.backend.service.name }}
+{{- end }}
+  selector: {{- include "sgdecoding.backend.matchLabels" . | nindent 4 }}

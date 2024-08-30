@@ -69,9 +69,14 @@ const LiveDecodeBtns: React.FC<Props> = (
 					if (isHypothesisResponse(response)) {
 						console.log('[DEBUG] HYPOTHESIS RESPONSE RECEIVED');
 						const { final, hypotheses } = response.result;
-						let newTranscription = hypotheses[0].transcript;
+						let newTranscription = (hypotheses[0].transcript).toLowerCase() + " \n";
 						console.log(newTranscription);
-						liveTranscriptionEnded({ nonFinal: "", final: [newTranscription] });
+
+						// liveTranscriptionEnded({ nonFinal: "", final: [newTranscription] });
+						if (response.result.final == true) {
+							liveTranscriptionEnded({ nonFinal: "", final: [newTranscription]});
+						}
+
 					} else {
 						console.log('[DEBUG] ADAPTATION RESPONSE RECEIVED');
 						setAdaptationState((response as AdaptationStateResponse).adaptation_state);

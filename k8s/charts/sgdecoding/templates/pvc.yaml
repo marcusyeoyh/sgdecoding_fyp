@@ -1,0 +1,70 @@
+{{- if .Values.frontend.enabled }}
+{{- if .Values.frontend.persistentVolume.enabled }}
+---
+{{- if not .Values.frontend.persistentVolume.existingClaim -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  {{- if .Values.frontend.persistentVolume.annotations }}
+  annotations:
+{{ toYaml .Values.frontend.persistentVolume.annotations | indent 4 }}
+  {{- end }}
+  labels:
+    {{- include "sgdecoding.frontend.labels" . | nindent 4 }}
+  name: {{ template "sgdecoding.frontend.fullname" . }}
+{{ include "sgdecoding.namespace" . | indent 2 }}
+spec:
+  accessModes:
+{{ toYaml .Values.frontend.persistentVolume.accessModes | indent 4 }}
+{{- if .Values.frontend.persistentVolume.storageClass }}
+{{- if (eq "-" .Values.frontend.persistentVolume.storageClass) }}
+  storageClassName: ""
+{{- else }}
+  storageClassName: "{{ .Values.frontend.persistentVolume.storageClass }}"
+{{- end }}
+{{- end }}
+{{- if .Values.frontend.persistentVolume.volumeBindingMode }}
+  volumeBindingModeName: "{{ .Values.frontend.persistentVolume.volumeBindingMode }}"
+{{- end }}
+  resources:
+    requests:
+      storage: "{{ .Values.frontend.persistentVolume.size }}"
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+
+{{- if .Values.backend.enabled }}
+{{- if .Values.backend.persistentVolume.enabled }}
+---
+{{- if not .Values.backend.persistentVolume.existingClaim -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  {{- if .Values.backend.persistentVolume.annotations }}
+  annotations:
+{{ toYaml .Values.backend.persistentVolume.annotations | indent 4 }}
+  {{- end }}
+  labels:
+    {{- include "sgdecoding.backend.labels" . | nindent 4 }}
+  name: {{ template "sgdecoding.backend.fullname" . }}
+{{ include "sgdecoding.namespace" . | indent 2 }}
+spec:
+  accessModes:
+{{ toYaml .Values.backend.persistentVolume.accessModes | indent 4 }}
+{{- if .Values.backend.persistentVolume.storageClass }}
+{{- if (eq "-" .Values.backend.persistentVolume.storageClass) }}
+  storageClassName: ""
+{{- else }}
+  storageClassName: "{{ .Values.backend.persistentVolume.storageClass }}"
+{{- end }}
+{{- end }}
+{{- if .Values.backend.persistentVolume.volumeBindingMode }}
+  volumeBindingModeName: "{{ .Values.backend.persistentVolume.volumeBindingMode }}"
+{{- end }}
+  resources:
+    requests:
+      storage: "{{ .Values.backend.persistentVolume.size }}"
+{{- end -}}
+{{- end -}}
+{{- end -}}

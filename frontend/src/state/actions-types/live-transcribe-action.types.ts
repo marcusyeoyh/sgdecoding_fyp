@@ -1,6 +1,6 @@
 import { LivetranscribeTypes } from '../types/index';
 
-interface transcriptionEndedAction{
+interface transcriptionEndedAction {
     type: LivetranscribeTypes.ENDED,
 	final: string[],
 	nonFinal: string

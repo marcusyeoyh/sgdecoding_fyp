@@ -26,8 +26,8 @@ export interface MyRecorder {
 }
 
 export interface Transcription {
-	final: String[],
-	nonFinal: String
+	final: string[],
+	nonFinal: string
 }
 
 const languageOptions = [
@@ -64,8 +64,7 @@ const LiveDecodePage: React.FC = () => {
 	// const adaptationStateRef = useRef<AdaptationState>();
 	// adaptationStateRef.current = adaptationState;
 
-	const [transcription, setTranscription] =
-		useState<Transcription>({
+	const [transcription, setTranscription] = useState<Transcription>({
 			final: [],
 			nonFinal: ""
 		});
@@ -75,7 +74,7 @@ const LiveDecodePage: React.FC = () => {
 	const [isLoading, setIsLoading] = useState(true);
 	const [showChangeVizOverlay, setShowChangeVizOverlay] = useState(false);
 	const [selectedViz, setSelectedViz] = useState("Oscilloscope");
-	const [selectedLangModel, setSelectedLangModel] = useState<string>("eng_closetalk");
+	const [selectedLangModel, setSelectedLangModel] = useState<string>("default");
 
 	const { hasSubEnded } = useSelector((state: RootState) => state.authReducer);
 	const { final, nonFinal } = useSelector((state: RootState) => state.liveTranscribeReducer);
@@ -209,7 +208,7 @@ const LiveDecodePage: React.FC = () => {
 
 
 	if (isLoading)
-		return <Container></Container>;
+		return (<Container></Container>);
 	if (recorder.isMicAccessGiven === false)
 		return (
 			<div style={{ textAlign: 'center' }}>
@@ -289,7 +288,7 @@ const LiveDecodePage: React.FC = () => {
 									placeholder='Language Model'
 									// fluid
 									selection
-									defaultValue={"eng_closetalk"}
+									defaultValue={"default"}
 									options={languageOptions}
 									onChange={onSelLanguageModelChange}
 									disabled={recorder.isRecording === RecordingStates.IN_PROGRESS
