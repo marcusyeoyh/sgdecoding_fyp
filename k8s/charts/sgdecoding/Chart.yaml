@@ -1,0 +1,23 @@
+apiVersion: v2
+# This is the version number of the application being deployed. 
+# This version number should be incremented each time you make changes to the application. 
+# Versions are not expected to follow Semantic Versioning. 
+# They should reflect the version of tutor application
+appVersion: 1.0.1
+description: Helm chart of ABAX.AI SG Decoding
+home: https://abax.ai
+type: application
+keywords:
+- sgdecoding
+- onlineasr
+- speech-to-text
+- stt
+- abax.ai
+- aispeechlab
+name: sg-decoding
+sources:
+- https://github.com/ntuspeechlab/k8s-speech-services
+# This is the chart version. This version number should be incremented each time you make changes
+# to the chart and its templates, including the app version.
+# Versions are expected to follow Semantic Versioning (https://semver.org/)
+version: 1.0.0

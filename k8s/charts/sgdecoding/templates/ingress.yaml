@@ -1,0 +1,106 @@
+{{- if .Values.frontend.enabled -}}
+{{- if .Values.frontend.ingress.enabled -}}
+---
+{{- $ingressApiIsStable := eq (include "ingress.isStable" .) "true" -}}
+{{- $ingressSupportsPathType := eq (include "ingress.supportsPathType" .) "true" -}}
+{{- $releaseName := .Release.Name -}}
+{{- $serviceName := include "sgdecoding.frontend.fullname" . }}
+{{- $servicePort := .Values.frontend.service.servicePort -}}
+{{- $ingressPath := .Values.frontend.ingress.path -}}
+{{- $ingressPathType := .Values.frontend.ingress.pathType -}}
+{{- $extraPaths := .Values.frontend.ingress.extraPaths -}}
+apiVersion: {{ template "ingress.apiVersion" . }}
+kind: Ingress
+metadata:
+{{- if .Values.frontend.ingress.annotations }}
+  annotations:
+{{ toYaml .Values.frontend.ingress.annotations | indent 4 }}
+{{- end }}
+  name: {{ template "sgdecoding.frontend.fullname" . }}
+{{ include "sgdecoding.namespace" . | indent 2 }}
+spec:
+  ingressClassName: "nginx"
+  rules:
+  {{- range .Values.frontend.ingress.hosts }}
+    {{- $url := splitList "/" . }}
+    - host: {{ first $url }}
+      http:
+        paths:
+{{ if $extraPaths }}
+{{ toYaml $extraPaths | indent 10 }}
+{{- end }}
+          - path: {{ $ingressPath }}
+            {{- if $ingressSupportsPathType }}
+            pathType: {{ $ingressPathType }}
+            {{- end }}
+            backend:
+              {{- if $ingressApiIsStable }}
+              service:
+                name: {{ $serviceName }}
+                port:
+                  number: {{ $servicePort }}
+              {{- else }}
+              serviceName: {{ $serviceName }}
+              servicePort: {{ $servicePort }}
+              {{- end }}
+  {{- end -}}
+{{- if .Values.frontend.ingress.tls }}
+  tls:
+{{ toYaml .Values.frontend.ingress.tls | indent 4 }}
+  {{- end -}}
+{{- end -}}
+{{- end -}}
+
+
+{{- if .Values.backend.enabled }}
+---
+{{- if .Values.backend.ingress.enabled -}}
+{{- $ingressApiIsStable := eq (include "ingress.isStable" .) "true" -}}
+{{- $ingressSupportsPathType := eq (include "ingress.supportsPathType" .) "true" -}}
+{{- $releaseName := .Release.Name -}}
+{{- $serviceName := include "sgdecoding.backend.fullname" . }}
+{{- $servicePort := .Values.backend.service.servicePort -}}
+{{- $ingressPath := .Values.backend.ingress.path -}}
+{{- $ingressPathType := .Values.backend.ingress.pathType -}}
+{{- $extraPaths := .Values.backend.ingress.extraPaths -}}
+apiVersion: {{ template "ingress.apiVersion" . }}
+kind: Ingress
+metadata:
+{{- if .Values.backend.ingress.annotations }}
+  annotations:
+{{ toYaml .Values.backend.ingress.annotations | indent 4 }}
+{{- end }}
+  name: {{ template "sgdecoding.backend.fullname" . }}
+{{ include "sgdecoding.namespace" . | indent 2 }}
+spec:
+  ingressClassName: "nginx"
+  rules:
+  {{- range .Values.backend.ingress.hosts }}
+    {{- $url := splitList "/" . }}
+    - host: {{ first $url }}
+      http:
+        paths:
+{{ if $extraPaths }}
+{{ toYaml $extraPaths | indent 10 }}
+{{- end }}
+          - path: {{ $ingressPath }}
+            {{- if $ingressSupportsPathType }}
+            pathType: {{ $ingressPathType }}
+            {{- end }}
+            backend:
+              {{- if $ingressApiIsStable }}
+              service:
+                name: {{ $serviceName }}
+                port:
+                  number: {{ $servicePort }}
+              {{- else }}
+              serviceName: {{ $serviceName }}
+              servicePort: {{ $servicePort }}
+              {{- end }}
+  {{- end -}}
+{{- if .Values.backend.ingress.tls }}
+  tls:
+{{ toYaml .Values.backend.ingress.tls | indent 4 }}
+  {{- end -}}
+{{- end -}}
+{{- end -}}

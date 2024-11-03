@@ -1,0 +1,29 @@
+---
+# Source: sg-decoding/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  name: sg-decoding-api
+  namespace: sgdecoding
+spec:
+  ingressClassName: "nginx"
+  rules:
+    - host: sgdecoding-api.speechlab.sg
+      http:
+        paths:
+
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: sg-decoding-api
+                port:
+                  number: 2000
+  tls:
+    - hosts:
+      - sgdecoding-api.speechlab.sg
+      secretName: sgdecoding-api-tls

@@ -1,0 +1,426 @@
+namespace: speech-applications
+team: devops
+
+rbac:
+  create: true
+
+podSecurityPolicy:
+  enabled: false
+
+imagePullSecrets:
+ - name: "ntuspeechlab-github-cr"
+
+nameOverride: ""
+fullnameOverride: ""
+
+
+## Define serviceAccount names for components. Defaults to component's fully qualified name.
+##
+serviceAccounts:
+  helpme:
+    create: false
+    name:
+    annotations: {}
+
+backend:
+  ## SG Decoding Backend container
+  enabled: true
+  ## SG Decoding Backend container image
+  ##
+  image:
+    repository: abxregistry.azurecr.io/sgdecoding-backend
+    tag: "v1.0."
+    pullPolicy: Always
+
+  ## SG Decoding Backend priorityClassName
+  ##
+  priorityClassName: ""
+
+  ## Additional Gateway API container environment variables
+  ## 
+  ## You specify this manually like you would a raw deployment manifest.
+  ## This means you can bind in environment variables from secrets.
+  ##
+  ## e.g. static environment variable:
+  ##  - name: DEMO_GREETING
+  ##    value: "Hello from the environment"
+  ##
+  ## e.g. secret environment variable:
+  ## - name: USERNAME
+  ##   valueFrom:
+  ##     secretKeyRef:
+  ##       name: mysecret
+  ##       key: username
+  env:
+    - name: PORT
+      value: "3000"
+    - name: PROXY_PORT
+      value: "8080"
+    - name: QUILLJS_PORT
+      value: "8081"
+    - name: GATEWAY_URL
+      value: "https://gateway.speechlab.sg"
+    - name: GATEWAY_SOCKET_URL
+      value: "wss://gateway.speechlab.sg"
+    - name: LIVE_TRANSCRIBE_QUOTA
+      value: "60"
+    - name: OFFLINE_TRANSCRIBE_QUOTA
+      value: "60"
+    - name: DB_HOST
+      value: "mongodb-0.mongodb-headless.speech-gateway.svc.cluster.local:27017,mongodb-1.mongodb-headless.speech-gateway.svc.cluster.local:27017"
+    - name: DB_USER
+      value: "root"
+    - name: DB_PASSWORD
+      value: "hpRYXjWSCg"
+    - name: DB_DATABASE
+      value: "sgdecoding"
+    - name: DB_CONNECTION_STRING
+      value: "mongodb://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST)/$(DB_DATABASE)?authSource=admin"
+
+  command: []
+
+  extraFlags:
+    # - web.enable-lifecycle
+
+  ## Additional SG Decoding Backend container arguments
+  ##
+  extraArgs: {}
+
+  ## Additional InitContainers to initialize the pod
+  ##
+
+  extraInitContainers: []
+
+  ## SG Decoding Backend Strategy type
+  # strategy:
+  #   type: Recreate
+  
+  # nodeSelector:
+  #   type: app
+  deploymentAnnotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: /metrics
+    prometheus.io/port: "8080"
+
+  persistentVolume:
+    ## If true, SG Decoding will create/use a Persistent Volume Claim
+    ## If false, use emptyDir
+    ##
+    enabled: false
+    accessModes:
+      - ReadWriteOnce
+    annotations: {}
+    existingClaim: ""
+    mountPath: /app/storage
+    size: 8Gi
+
+    ## SG Decoding Backend data Persistent Volume Storage Class
+    ## If defined, storageClassName: <storageClass>
+    ## If set to "-", storageClassName: "", which disables dynamic provisioning
+    ## If undefined (the default) or set to null, no storageClassName spec is
+    ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+    ##   GKE, AWS & OpenStack)
+    ##
+    # storageClass: "-"
+
+    ## SG Decoding Backend data Persistent Volume Binding Mode
+    ## If defined, volumeBindingMode: <volumeBindingMode>
+    ## If undefined (the default) or set to null, no volumeBindingMode spec is
+    ##   set, choosing the default mode.
+    ##
+    # volumeBindingMode: ""
+
+    ## Subdirectory of SG Decoding data Persistent Volume to mount
+    ## Useful if the volume's root directory is not empty
+    ##
+    subPath: ""
+
+  emptyDir:
+    ## SG Decoding Backend emptyDir volume size limit
+    ##
+    sizeLimit: ""
+
+  ## SG Decoding Backend container volume mounts
+  ##
+  volumeMounts: []
+  volumes: []
+
+  ## PodDisruptionBudget settings
+  ## ref: https://kubernetes.io/docs/concepts/workloads/pods/disruptions/
+  ##
+  podDisruptionBudget:
+    enabled: false
+    maxUnavailable: 1
+
+  ## Use a StatefulSet if replicaCount needs to be greater than 1 (see below)
+  ##
+  replicaCount: 1
+
+  ## SG Decoding Backend resource requests and limits
+  ## Ref: http://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources:
+    limits:
+      memory: 2Gi
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+
+  securityContext: {}
+    # runAsUser: 65534
+    # runAsNonRoot: true
+    # runAsGroup: 65534
+    # fsGroup: 65534
+    # privileged: true
+    # capabilities:
+    #   add: ["SYS_ADMIN"]
+
+  service:
+    annotations: {}
+    labels: {}
+
+    servicePort: 2000
+    targetPort: 2000
+    protocol: TCP
+    name: http
+    sessionAffinity: None
+    type: ClusterIP
+
+  ingress:
+    ## If true, SG Decoding Ingress will be created
+    ##
+    enabled: true
+
+    # For Kubernetes >= 1.18 you should specify the ingress-controller via the field ingressClassName
+    # See https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress
+    # ingressClassName: nginx
+
+    ## SG Decoding Ingress annotations
+    ##
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-speech-prod"
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/rewrite-target: /
+
+    ## SG Decoding Ingress additional labels
+    ##
+    extraLabels: {}
+
+    ## SG Decoding Ingress hostnames with optional path
+    ## Must be provided if Ingress is enabled
+    ##
+    hosts:
+      - sgdecoding-api.speechlab.sg
+
+    path: /
+
+    # pathType is only for k8s >= 1.18
+    pathType: Prefix
+
+    ## Extra paths to prepend to every host configuration. This is useful when working with annotation based services.
+    extraPaths: []
+    # - path: /*
+    #   backend:
+    #     serviceName: ssl-redirect
+    #     servicePort: use-annotation
+
+    ## SG Decoding Ingress TLS configuration
+    ## Secrets must be manually created in the namespace
+    ##
+    tls:
+      - hosts:
+          - sgdecoding-api.speechlab.sg
+        secretName: sgdecoding-api-tls
+
+
+frontend:
+  ## SG Decoding Dashboard container
+  enabled: true
+
+  ## SG Decoding Dashboard container image
+  ##
+  image:
+    repository: abxregistry.azurecr.io/sgdecoding-frontend
+    tag: "v1.0"
+    pullPolicy: Always
+
+  ## SG Decoding priorityClassName
+  ##
+  priorityClassName: ""
+
+  ## Additional Dashboard container environment variables
+  ## 
+  ## You specify this manually like you would a raw deployment manifest.
+  ## This means you can bind in environment variables from secrets.
+  ##
+  ## e.g. static environment variable:
+  ##  - name: DEMO_GREETING
+  ##    value: "Hello from the environment"
+  ##
+  ## e.g. secret environment variable:
+  ## - name: USERNAME
+  ##   valueFrom:
+  ##     secretKeyRef:
+  ##       name: mysecret
+  ##       key: username
+  env:
+    - name: FAST_REFRESH
+      value: false
+    - name: REACT_APP_API
+      value: "https://sgdecoding-api.speechlab.sg"
+    - name: REACT_APP_SOCKETAPI
+      value: "wss://sgdecoding-api.speechlab.sg"
+    - name: REACT_APP_LIVE_WSS
+      value: "wss://gateway.speechlab.sg"
+
+  command: []
+  extraFlags:
+    # - web.enable-lifecycle
+
+  ## Additional SG Decoding Dashboard container arguments
+  ##
+  extraArgs: {}
+
+  ## Additional InitContainers to initialize the pod
+  ##
+  extraInitContainers: []
+
+  ## SG Decoding Dashboard Strategy type
+  # strategy:
+  #   type: Recreate
+
+  # nodeSelector:
+  #   type: app
+  deploymentAnnotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: /metrics
+    prometheus.io/port: "8080"
+
+  persistentVolume:
+    ## If true, SG Decoding Dashboard will create/use a Persistent Volume Claim
+    ## If false, use emptyDir
+    ##
+    enabled: false
+    accessModes:
+      - ReadWriteOnce
+    annotations: {}
+    existingClaim: ""
+    mountPath: /data
+    size: 10Gi
+
+    ## SG Decoding Dashboard data Persistent Volume Storage Class
+    ## If defined, storageClassName: <storageClass>
+    ## If set to "-", storageClassName: "", which disables dynamic provisioning
+    ## If undefined (the default) or set to null, no storageClassName spec is
+    ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+    ##   GKE, AWS & OpenStack)
+    ##
+    # storageClass: "-"
+
+    ## SG Decoding Dashboard data Persistent Volume Binding Mode
+    ## If defined, volumeBindingMode: <volumeBindingMode>
+    ## If undefined (the default) or set to null, no volumeBindingMode spec is
+    ##   set, choosing the default mode.
+    ##
+    # volumeBindingMode: ""
+
+    ## Subdirectory of SG Decoding Dashboard data Persistent Volume to mount
+    ## Useful if the volume's root directory is not empty
+    ##
+    subPath: ""
+
+  emptyDir:
+    ## SG Decoding Dashboard emptyDir volume size limit
+    ## 
+    sizeLimit: ""
+
+  ## SG Decoding Dashboard container volume mounts
+  ##
+  volumeMounts: []
+
+  volumes: []
+
+  ## PodDisruptionBudget settings
+  ## ref: https://kubernetes.io/docs/concepts/workloads/pods/disruptions/
+  ##
+  podDisruptionBudget:
+    enabled: false
+    maxUnavailable: 1
+
+  ## Use a StatefulSet if replicaCount needs to be greater than 1 (see below)
+  ##
+  replicaCount: 1
+
+  ## SG Decoding Dashboard resource requests and limits
+  ## Ref: http://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources:
+    limits:
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 2Gi
+
+  # securityContext:
+  #   runAsUser: 65534
+  #   runAsNonRoot: true
+  #   runAsGroup: 65534
+  #   fsGroup: 65534
+
+  service:
+    annotations: {}
+    labels: {}
+
+    servicePort: 3000
+    targetPort: 3000
+    protocol: TCP
+    name: http
+    sessionAffinity: None
+    type: ClusterIP
+
+  ingress:
+    ## If true, SG Decoding Dashboard Ingress will be created
+    ##
+    enabled: false
+
+    # For Kubernetes >= 1.18 you should specify the ingress-controller via the field ingressClassName
+    # See https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress
+    # ingressClassName: nginx
+
+    ## SG Decoding Dashboard Ingress annotations
+    ##
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-speech-prod"
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/rewrite-target: /
+
+    ## SG Decoding Ingress additional labels
+    ##
+    extraLabels: {}
+
+    ## SG Decoding Ingress hostnames with optional path
+    ## Must be provided if Ingress is enabled
+    ##
+    hosts:
+      - sgdecoding.speechlab.sg
+
+    path: /
+
+    # pathType is only for k8s >= 1.18
+    pathType: Prefix
+
+    ## Extra paths to prepend to every host configuration. This is useful when working with annotation based services.
+    extraPaths: []
+    # - path: /*
+    #   backend:
+    #     serviceName: ssl-redirect
+    #     servicePort: use-annotation
+
+    ## SG Decoding Ingress TLS configuration
+    ## Secrets must be manually created in the namespace
+    ##
+    tls:
+      - hosts:
+          - sgdecoding.speechlab.sg
+        secretName: sgdecoding-tls
+

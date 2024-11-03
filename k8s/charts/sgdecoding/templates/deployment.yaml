@@ -1,0 +1,232 @@
+{{- $dot := . }}
+{{- if .Values.backend.enabled }}
+---
+apiVersion: {{ template "sgdecoding.deployment.apiVersion" . }}
+kind: Deployment
+metadata:
+  name: {{ template "sgdecoding.backend.fullname" $dot }}
+{{ include "sgdecoding.namespace" $dot | indent 2 }}
+  labels:
+    {{- include "sgdecoding.backend.labels" $dot | nindent 4 }}
+{{- if $.Values.backend.deploymentAnnotations }}
+  annotations: {{ toYaml $.Values.backend.deploymentAnnotations | nindent 4 }}
+{{- end }}
+spec:
+  replicas: {{ $.Values.backend.replicaCount }}
+  {{- if $.Values.backend.strategy }}
+  strategy:
+{{ toYaml $.Values.backend.strategy | trim | indent 4 }}
+    {{ if eq $.Values.backend.strategy.type "Recreate" }}rollingUpdate: null{{ end }}
+{{- end }}
+  selector:
+    matchLabels:
+      {{- include "sgdecoding.backend.matchLabels" $dot | nindent 6 }}
+  template:
+    metadata:
+    {{- if $.Values.backend.podAnnotations }}
+      annotations:
+        {{ toYaml $.Values.backend.podAnnotations | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "sgdecoding.backend.matchLabels" $dot | nindent 8 }}
+        {{- if $.Values.backend.podLabels}}
+        {{ toYaml $.Values.backend.podLabels | nindent 8 }}
+        {{- end}}
+    spec:
+      {{- if $.Values.backend.extraInitContainers }}
+      initContainers:
+{{ toYaml $.Values.backend.extraInitContainers | indent 8 }}
+      {{- end }}
+      {{- if $.Values.imagePullSecrets }}
+      imagePullSecrets:
+{{ toYaml $.Values.imagePullSecrets | indent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ template "sgdecoding.backend.fullname" $dot }}
+          image: "{{ $.Values.backend.image.repository }}:{{ $.Values.backend.image.tag }}"
+          imagePullPolicy: "{{ $.Values.backend.image.pullPolicy }}"
+          {{- if $.Values.backend.command }}
+          command:
+{{ toYaml $.Values.backend.command | indent 12}}
+          {{- end }}
+          {{- if $.Values.backend.env }}
+          env:
+{{ toYaml $.Values.backend.env | indent 12}}
+          {{- end }}
+          {{- if $.Values.backend.args }}
+          args:
+{{ toYaml $.Values.backend.args | indent 12}}
+          {{- end }}
+          ports:
+            - containerPort: 2000
+              protocol: TCP
+              name: http
+            - containerPort: 8080
+              protocol: TCP
+              name: ws
+            - containerPort: 8081
+              protocol: TCP
+              name: http1
+          readinessProbe:
+           httpGet:
+               path: /
+               port: 2000
+           initialDelaySeconds: 10
+           periodSeconds: 10
+           timeoutSeconds: 3
+           successThreshold: 1
+           failureThreshold: 5
+          livenessProbe:
+           httpGet:
+             path: /
+             port: 2000
+           initialDelaySeconds: 10
+           periodSeconds: 10
+           timeoutSeconds: 3
+           successThreshold: 1
+           failureThreshold: 5
+          resources: 
+{{ toYaml $.Values.backend.resources | indent 12 }}
+          volumeMounts: {{- toYaml $.Values.backend.volumeMounts | nindent 12 }}
+      volumes:
+{{ toYaml $.Values.backend.volumes | indent 8 }}
+    {{- if $.Values.backend.nodeSelector }}
+      nodeSelector:
+{{ toYaml $.Values.backend.nodeSelector | indent 8 }}
+    {{- end }}
+    {{- if $.Values.backend.hostAliases }}
+      hostAliases:
+{{ toYaml $.Values.backend.hostAliases | indent 8 }}
+    {{- end }}
+    {{- if $.Values.backend.dnsConfig }}
+      dnsConfig:
+{{ toYaml $.Values.backend.dnsConfig | indent 8 }}
+    {{- end }}
+    {{- if $.Values.backend.securityContext }}
+      securityContext:
+{{ toYaml $.Values.backend.securityContext | indent 8 }}
+    {{- end }}
+    {{- if $.Values.backend.tolerations }}
+      tolerations:
+{{ toYaml $.Values.backend.tolerations | indent 8 }}
+    {{- end }}
+    {{- if $.Values.backend.affinity }}
+      affinity:
+{{ toYaml $.Values.backend.affinity | indent 8 }}
+    {{- end }}
+
+{{- end }}
+
+
+{{- if .Values.frontend.enabled }}
+---
+apiVersion: {{ template "sgdecoding.deployment.apiVersion" . }}
+kind: Deployment
+metadata:
+  name: {{ template "sgdecoding.frontend.fullname" $dot }}
+{{ include "sgdecoding.namespace" $dot | indent 2 }}
+  labels:
+    {{- include "sgdecoding.frontend.labels" $dot | nindent 4 }}
+{{- if $.Values.frontend.deploymentAnnotations }}
+  annotations:
+    {{ toYaml $.Values.frontend.deploymentAnnotations | nindent 4 }}
+{{- end }}
+spec:
+  replicas: {{ $.Values.frontend.replicaCount }}
+  {{- if $.Values.frontend.strategy }}
+  strategy:
+{{ toYaml $.Values.frontend.strategy | trim | indent 4 }}
+    {{ if eq $.Values.frontend.strategy.type "Recreate" }}rollingUpdate: null{{ end }}
+{{- end }}
+  selector:
+    matchLabels:
+      {{- include "sgdecoding.frontend.matchLabels" $dot | nindent 6 }}
+  template:
+    metadata:
+    {{- if $.Values.frontend.podAnnotations }}
+      annotations:
+        {{ toYaml $.Values.frontend.podAnnotations | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "sgdecoding.frontend.matchLabels" $dot | nindent 8 }}
+        {{- if $.Values.frontend.podLabels}}
+        {{ toYaml $.Values.frontend.podLabels | nindent 8 }}
+        {{- end}}
+    spec:
+      {{- if $.Values.frontend.extraInitContainers }}
+      initContainers:
+{{ toYaml $.Values.frontend.extraInitContainers | indent 8 }}
+      {{- end }}
+      {{- if $.Values.imagePullSecrets }}
+      imagePullSecrets:
+{{ toYaml $.Values.imagePullSecrets | indent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ template "sgdecoding.frontend.fullname" $dot }}
+          image: "{{ $.Values.frontend.image.repository }}:{{ $.Values.frontend.image.tag }}"
+          imagePullPolicy: "{{ $.Values.frontend.image.pullPolicy }}"
+          {{- if $.Values.frontend.command }}
+          command:
+{{ toYaml $.Values.frontend.command | indent 12}}
+          {{- end }}
+          {{- if $.Values.frontend.env }}
+          env:
+{{ toYaml $.Values.frontend.env | indent 12}}
+          {{- end }}
+          {{- if $.Values.frontend.args }}
+          args:
+{{ toYaml $.Values.frontend.args | indent 12}}
+          {{- end }}
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+              name: http
+          readinessProbe:
+            httpGet:
+                path: /
+                port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 3
+            successThreshold: 1
+            failureThreshold: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 3
+            successThreshold: 1
+            failureThreshold: 5
+          resources: 
+{{ toYaml $.Values.frontend.resources | indent 12 }}
+          volumeMounts: {{- toYaml $.Values.frontend.volumeMounts | nindent 12 }}
+      volumes:
+{{ toYaml $.Values.frontend.volumes | indent 8 }}
+    {{- if $.Values.frontend.nodeSelector }}
+      nodeSelector:
+{{ toYaml $.Values.frontend.nodeSelector | indent 8 }}
+    {{- end }}
+    {{- if $.Values.frontend.hostAliases }}
+      hostAliases:
+{{ toYaml $.Values.frontend.hostAliases | indent 8 }}
+    {{- end }}
+    {{- if $.Values.frontend.dnsConfig }}
+      dnsConfig:
+{{ toYaml $.Values.frontend.dnsConfig | indent 8 }}
+    {{- end }}
+    {{- if $.Values.frontend.securityContext }}
+      securityContext:
+{{ toYaml $.Values.frontend.securityContext | indent 8 }}
+    {{- end }}
+    {{- if $.Values.frontend.tolerations }}
+      tolerations:
+{{ toYaml $.Values.frontend.tolerations | indent 8 }}
+    {{- end }}
+    {{- if $.Values.frontend.affinity }}
+      affinity:
+{{ toYaml $.Values.frontend.affinity | indent 8 }}
+    {{- end }}
+
+{{- end }}

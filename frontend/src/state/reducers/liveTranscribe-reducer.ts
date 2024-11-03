@@ -15,9 +15,20 @@ const reducer = (state = INITIAL_STATE, action: liveTranscribeAction ) : LiveTra
 	switch (action.type) {
 		case LivetranscribeTypes.ENDED:
             const { final, nonFinal } = action;
-			// return {...state, final, nonFinal };
+
+			// let updatedFinal: string[];
+			// updatedFinal = [...state.final];
+
+			// if (state.final.length > 0 && nonFinal !== "" && final.length === 0) {
+			//   // Update the last element of state.final with nonFinal
+			//   updatedFinal[updatedFinal.length - 1] = nonFinal;
+			// } else if (nonFinal === "" && final.length > 0) {
+			//   // Add final to state.final
+			//   updatedFinal = Array.from(new Set([...state.final, ...final]));
+			// }
 			const updatedFinal = Array.from(new Set([...state.final, ...final]));
 			return { ...state, final: updatedFinal, nonFinal };
+
         default:
 			return state;
 	}

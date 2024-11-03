@@ -1,0 +1,179 @@
+---
+# Source: sg-decoding/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sg-decoding-api
+  namespace: sgdecoding
+  labels:
+    helm.sh/chart: sg-decoding-1.0.0
+    app.kubernetes.io/name: sg-decoding
+    app.kubernetes.io/instance: sgdecoding
+    app.kubernetes.io/version: "1.0.1"
+    app.kubernetes.io/managed-by: Helm
+  annotations: 
+    prometheus.io/path: /metrics
+    prometheus.io/port: "8080"
+    prometheus.io/scrape: "true"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: api
+      app.kubernetes.io/name: sg-decoding
+      app.kubernetes.io/instance: sgdecoding
+  template:
+    metadata:
+      labels:
+        component: api
+        app.kubernetes.io/name: sg-decoding
+        app.kubernetes.io/instance: sgdecoding
+    spec:
+      imagePullSecrets:
+        - name: github-cr
+      containers:
+        - name: sg-decoding-api
+          image: "ghcr.io/ntuspeechlab/sgdecoding-backend:v1.0."
+          imagePullPolicy: "Always"
+          env:
+            - name: PORT
+              value: "3000"
+            - name: PROXY_PORT
+              value: "8080"
+            - name: QUILLJS_PORT
+              value: "8081"
+            - name: GATEWAY_URL
+              value: https://gateway.speechlab.sg
+            - name: GATEWAY_SOCKET_URL
+              value: wss://gateway.speechlab.sg
+            - name: LIVE_TRANSCRIBE_QUOTA
+              value: "60"
+            - name: OFFLINE_TRANSCRIBE_QUOTA
+              value: "60"
+            - name: DB_HOST
+              value: ""
+            - name: DB_USER
+              value: root
+            - name: DB_PASSWORD
+              value: randomepwdhere
+            - name: DB_DATABASE
+              value: sgdecoding
+            - name: DB_CONNECTION_STRING
+              value: mongodb://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST)/$(DB_DATABASE)?authSource=admin
+          ports:
+            - containerPort: 2000
+              protocol: TCP
+              name: http
+            - containerPort: 8080
+              protocol: TCP
+              name: ws
+            - containerPort: 8081
+              protocol: TCP
+              name: http1
+          readinessProbe:
+           httpGet:
+               path: /
+               port: 2000
+           initialDelaySeconds: 10
+           periodSeconds: 10
+           timeoutSeconds: 3
+           successThreshold: 1
+           failureThreshold: 5
+          livenessProbe:
+           httpGet:
+             path: /
+             port: 2000
+           initialDelaySeconds: 10
+           periodSeconds: 10
+           timeoutSeconds: 3
+           successThreshold: 1
+           failureThreshold: 5
+          resources: 
+            limits:
+              memory: 2Gi
+            requests:
+              cpu: 1000m
+              memory: 2Gi
+          volumeMounts:
+            []
+      volumes:
+        []
+---
+# Source: sg-decoding/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sg-decoding-web
+  namespace: sgdecoding
+  labels:
+    helm.sh/chart: sg-decoding-1.0.0
+    app.kubernetes.io/name: sg-decoding
+    app.kubernetes.io/instance: sgdecoding
+    app.kubernetes.io/version: "1.0.1"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    
+    prometheus.io/path: /metrics
+    prometheus.io/port: "8080"
+    prometheus.io/scrape: "true"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: web
+      app.kubernetes.io/name: sg-decoding
+      app.kubernetes.io/instance: sgdecoding
+  template:
+    metadata:
+      labels:
+        component: web
+        app.kubernetes.io/name: sg-decoding
+        app.kubernetes.io/instance: sgdecoding
+    spec:
+      imagePullSecrets:
+        - name: github-cr
+      containers:
+        - name: sg-decoding-web
+          image: "ghcr.io/ntuspeechlab/sgdecoding-frontend:v1.0"
+          imagePullPolicy: "Always"
+          env:
+            - name: FAST_REFRESH
+              value: false
+            - name: REACT_APP_API
+              value: https://sgdecoding-api.speechlab.sg
+            - name: REACT_APP_SOCKETAPI
+              value: wss://sgdecoding-api.speechlab.sg
+            - name: REACT_APP_LIVE_WSS
+              value: wss://gateway.speechlab.sg
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+              name: http
+          readinessProbe:
+            httpGet:
+                path: /
+                port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 3
+            successThreshold: 1
+            failureThreshold: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 3
+            successThreshold: 1
+            failureThreshold: 5
+          resources: 
+            limits:
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 2Gi
+          volumeMounts:
+            []
+      volumes:
+        []

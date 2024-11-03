@@ -1,0 +1,48 @@
+---
+# Source: sg-decoding/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: sg-decoding-web
+  namespace: sgdecoding
+  labels:
+    helm.sh/chart: sg-decoding-1.0.0
+    app.kubernetes.io/name: sg-decoding
+    app.kubernetes.io/instance: sgdecoding
+    app.kubernetes.io/version: "1.0.1"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3000
+      targetPort: 3000
+      protocol: TCP
+      name: http
+  selector:
+    component: web
+    app.kubernetes.io/name: sg-decoding
+    app.kubernetes.io/instance: sgdecoding
+---
+# Source: sg-decoding/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: sg-decoding-api
+  namespace: sgdecoding
+  labels:
+    helm.sh/chart: sg-decoding-1.0.0
+    app.kubernetes.io/name: sg-decoding
+    app.kubernetes.io/instance: sgdecoding
+    app.kubernetes.io/version: "1.0.1"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 2000
+      targetPort: 2000
+      protocol: TCP
+      name: http
+  selector:
+    component: api
+    app.kubernetes.io/name: sg-decoding
+    app.kubernetes.io/instance: sgdecoding

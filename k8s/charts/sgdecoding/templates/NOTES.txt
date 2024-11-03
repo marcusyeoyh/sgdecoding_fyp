@@ -1,0 +1,35 @@
+{{- if .Values.backend.enabled -}}
+The Speech Gateway API can be accessed via port {{ .Values.backend.service.servicePort }} on the following DNS name from within your cluster:
+{{ template "sgdecoding.backend.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local
+
+{{ if .Values.backend.ingress.enabled -}}
+From outside the cluster, the backend URL(s) are:
+{{- range .Values.backend.ingress.hosts }}
+http://{{ . }}
+{{- end }}
+{{- else }}
+Get the Speech Gateway API URL by running these commands in the same shell:
+{{- if contains "NodePort" .Values.backend.service.type }}
+  export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ template "sgdecoding.backend.fullname" . }})
+  export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
+  echo http://$NODE_IP:$NODE_PORT
+{{- else if contains "LoadBalancer" .Values.backend.service.type }}
+  NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+        You can watch the status of by running 'kubectl get svc --namespace {{ .Release.Namespace }} -w {{ template "sgdecoding.backend.fullname" . }}'
+
+  export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ template "sgdecoding.backend.fullname" . }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+  echo http://$SERVICE_IP:{{ .Values.backend.service.servicePort }}
+{{- else if contains "ClusterIP"  .Values.backend.service.type }}
+  export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app={{ template "sgdecoding.name" . }},component={{ .Values.backend.name }}" -o jsonpath="{.items[0].metadata.name}")
+  kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 80
+{{- end }}
+{{- end }}
+
+{{- if .Values.backend.persistentVolume.enabled }}
+{{- else }}
+#################################################################################
+######   WARNING: Persistence is disabled!!! You will lose your data when   #####
+######            the backend pod is terminated.                             #####
+#################################################################################
+{{- end }}
+{{- end }}
