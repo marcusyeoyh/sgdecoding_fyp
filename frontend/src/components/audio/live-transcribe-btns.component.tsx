@@ -11,6 +11,7 @@ import { MyRecorder, RecordingStates,
 import { actionCreators } from "../../state";
 import { RootState } from "../../state/reducers";
 import styles from './live-transcribe-btns.module.scss';
+
 // TODO use Redux Store for these props.
 interface Props {
 	IS_DEBUGGING: boolean,
@@ -27,7 +28,6 @@ interface Props {
 
 const LiveDecodeBtns: React.FC<Props> = (
 	{ IS_DEBUGGING, 
-		// transcription, setTranscription, 
 		webSocketRef, recorder, setRecorder, allRecordedChunks, selectedLangModel }
 ) => {
 	/* */
@@ -46,8 +46,6 @@ const LiveDecodeBtns: React.FC<Props> = (
 	const { final, nonFinal } = useSelector((state: RootState) => state.liveTranscribeReducer);
     const { selectedNotes } = useSelector((state: RootState) => state.notesReducer);
 
-	
-
 	const onStartClick = () => {
 		console.log("[DEBUG] Are you in Debug mode: " + IS_DEBUGGING);
 		if (!IS_DEBUGGING) {
@@ -65,16 +63,11 @@ const LiveDecodeBtns: React.FC<Props> = (
 						const { final, hypotheses } = response.result;
 						let newTranscription = hypotheses[0].transcript;
 						console.log(newTranscription);
-						liveTranscriptionEnded({ nonFinal: "", final: [newTranscription] });
-						if (final) { // 100% of what the word is
-						// 	liveTranscriptionEnded({ nonFinal: "", final: [newTranscription] });
-							// setTranscription(prev => ({ nonFinal: "", final: [...prev.final, newTranscription] }));
-						} else { // not 100% what the word is
-						// 	liveTranscriptionEnded({ nonFinal: "... ..." + newTranscription, final:[] });
-						// 	// liveTranscriptionEnded(prev => ({ ...prev, nonFinal: "... ..." + newTranscription };
-							// setTranscription(prev => ({ ...prev, nonFinal: "... ..." + newTranscription }));
-						}
+						console.log(response.result.final);
 
+						if (response.result.final == true) {
+							liveTranscriptionEnded({ nonFinal: "", final: [newTranscription]});
+						}
 					} else {
 						console.log('[DEBUG] ADAPTATION RESPONSE RECEIVED');
 						setAdaptationState((response as AdaptationStateResponse).adaptation_state);
@@ -120,9 +113,9 @@ const LiveDecodeBtns: React.FC<Props> = (
 	const onStopClick = () => {
 		recorder.audioWorklet!.port.postMessage({ isRecording: RecordingStates.STOPPED });
 		setRecorder({ ...recorder, isRecording: RecordingStates.STOPPED });
-		console.log("debug, ON STOP CLICK",final);
-		addTranscriptedNotes(selectedNotes?.text+"\n"+final[0]);
-		liveTranscriptionEnded({ nonFinal: "", final: [""] });
+		console.log("debug, ON STOP CLICK", final);
+		addTranscriptedNotes(selectedNotes?.text + "\n" + (final.join("\n")));
+		// liveTranscriptionEnded({ nonFinal: "", final: [""] });
 		if (!IS_DEBUGGING) {
 			webSocketConn?.close();
 			setWebSocketConn(undefined);
@@ -177,8 +170,6 @@ const LiveDecodeBtns: React.FC<Props> = (
 		element.click();
 		document.body.removeChild(element);
 	};
-
-
 
 	/* */
 	useEffect(() => {
