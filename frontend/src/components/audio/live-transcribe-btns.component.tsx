@@ -62,6 +62,8 @@ const LiveDecodeBtns: React.FC<Props> = (
 						console.log('[DEBUG] HYPOTHESIS RESPONSE RECEIVED');
 						const { final, hypotheses } = response.result;
 						let newTranscription = (hypotheses[0].transcript).toLowerCase() + "\n";
+						console.log('[DEBUG] New Transcription: ', newTranscription);
+						liveTranscriptionEnded({ nonFinal: newTranscription, final: []});
 												
 						if (response.result.final == true) {
 							liveTranscriptionEnded({ nonFinal: "", final: [newTranscription]});

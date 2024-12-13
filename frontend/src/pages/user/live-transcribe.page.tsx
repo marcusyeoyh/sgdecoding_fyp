@@ -304,7 +304,7 @@ const LiveDecodePage: React.FC = () => {
 											?
 											"Press \"Start\" to begin..."
 											:
-											final
+											final.join("") + " " + nonFinal
 									}
 								</Container>
 							</Grid.Row>
