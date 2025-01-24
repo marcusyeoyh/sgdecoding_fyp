@@ -135,8 +135,8 @@ export function convertToWAVFile(config: ConvToWavConfig, callback: Function) {
 }
 
 function createWorkerURL(_function: Function){
-	return URL.createObjectURL(new Blob([_function.toString(),
-		';this.onmessage =  function (eee) {' + _function.name + '(eee.data);}'
+	return URL.createObjectURL(new Blob([
+		';this.onmessage =  function (eee) {(' + _function.toString() + ')(eee.data);}'
 		], {
 			type: 'application/javascript'
 		}));
