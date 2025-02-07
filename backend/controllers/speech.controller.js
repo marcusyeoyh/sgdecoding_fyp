@@ -3,6 +3,7 @@ const FormData = require("form-data");
 const { ParseSRT_JSON, setUpdatedFalse } = require("../helpers");
 const yauzl = require("yauzl");
 const fs = require("fs");
+const path = require("path");
 const jwt = require('jsonwebtoken');
 
 async function uploadFile(req, res, next) {
@@ -55,13 +56,18 @@ async function getsTranscriptionJobHistory(req, res, next) {
 	await axios
 		.get(
 			`${process.env.GATEWAY_URL}/speech/history`,
-			{ responseType: "json" }
+			{ responseType: "json",
+        headers: {
+          Authorization: `${req.headers.authorization}`,
+          "Access-Control-Allow-Origin": "*",
+        }
+       }
 		)
 		.then((response) => {
 			res.status(response.status).json(response.data);
 		})
 		.catch((error) => {
-			console.log(error.response);
+      console.log(error.response);
 			resStatus = error.response.status || 500;
 			resPayload = error.response.data || { message: "Something went terribly wrong!" }
 			res.status(resStatus).json(resPayload);
@@ -97,12 +103,18 @@ async function getTranscriptionResult(req, res, next) {
 async function getTranscriptionInJson(req, res, next) {
 
   console.log("[DEBUG] received id: " + req.params.id);
-  // Download to temporary folder
-  const reqFileStr =
-    "_temp/" +
-    new Date().toString().replace(":", "_").slice(0, -3);
-  var fileWriter = fs.createWriteStream(`${reqFileStr}.zip`);
+  // Define the directory and ensure it exists
+  const tempDir = "_temp";
+  if (!fs.existsSync(tempDir)) {
+    fs.mkdirSync(tempDir, { recursive: true }); // Create the directory if it does not exist
+  }
 
+  // Generate a safe filename
+  const reqFileStr =
+    new Date().toISOString().replace(/:/g, "_").slice(0, -5); // Remove problematic characters
+
+  const filePath = path.join(tempDir, reqFileStr);
+  var fileWriter = fs.createWriteStream(`${filePath}.zip`);
 
   await axios
     .get(`${process.env.GATEWAY_URL}/speech/${req.params.id}/result`, {
@@ -113,7 +125,7 @@ async function getTranscriptionInJson(req, res, next) {
       responseType: "json",
     })
     .then((getUrlRes) => {
-      return axios.get(getUrlRes.data.url, {
+      return axios.get(getUrlRes.data.url.split('?')[0], {
         responseType: "stream",
       });
     })
@@ -132,7 +144,7 @@ async function getTranscriptionInJson(req, res, next) {
       fileWriter.on("close", async () => {
         console.log("[DEBUG] Successfully write file to local temp folder");
         yauzl.open(
-          `${reqFileStr}.zip`,
+          `${filePath}.zip`,
           { lazyEntries: true },
           (err, zipfile) => {
             if (err) throw err;
@@ -177,9 +189,9 @@ async function getTranscriptionInJson(req, res, next) {
                       reqFileStr +
                       "/"
                   );
-                  if (!fs.existsSync(reqFileStr)) fs.mkdirSync(reqFileStr);
+                  if (!fs.existsSync(filePath)) fs.mkdirSync(filePath);
                   unzippedFileWriter = fs.createWriteStream(
-                    `${reqFileStr}/${entry.fileName}`
+                    `${filePath}/${entry.fileName}`
                   );
                   // console.log("[DEBUG] readStream.pipe(fileWriter2)");
                   readStream.pipe(unzippedFileWriter);
@@ -190,7 +202,7 @@ async function getTranscriptionInJson(req, res, next) {
             zipfile.on("close", (d) => {
               console.log("[DEBUG] Closing Zip File");
               let testStr = fs
-                .readFileSync(`${reqFileStr}/${srtFileName}.srt`)
+                .readFileSync(`${filePath}/${srtFileName}.srt`)
                 .toString();
 
               let testRes = ParseSRT_JSON.parse(testStr);
@@ -202,8 +214,8 @@ async function getTranscriptionInJson(req, res, next) {
                   ) === index
               );
 
-              fs.rmSync(`${reqFileStr}/`, { recursive: true, force: true });
-              fs.rmSync(`${reqFileStr}.zip`, { recursive: true, force: true });
+              fs.rmSync(`${filePath}/`, { recursive: true, force: true });
+              fs.rmSync(`${filePath}.zip`, { recursive: true, force: true });
 
               console.log("[DEBUG] Sending Response OK");
               res.status(200).json({ transcribedText: testRes });

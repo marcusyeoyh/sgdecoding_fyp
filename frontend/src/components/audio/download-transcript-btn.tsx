@@ -28,7 +28,7 @@ const DownloadTranscriptButton: React.FC<Props> = ({ transcriptHistory, isDisabl
 
 			let anchor = document.createElement('a');
 			anchor.style.display = 'none';
-			anchor.href = url;
+			anchor.href = url.split('?')[0];
 			//TODO Not working! Can't set the download file name
 			anchor.download = transcriptHistory.title.replace(' ', '_') + ".zip";
 			document.body.appendChild(anchor);
