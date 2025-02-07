@@ -73,6 +73,7 @@ const ViewOneTranscript: React.FC = () => {
 			try {
 				setIsLoadingAudio(true);
 				const res = await getOneAudioRecordingFileSrcUrl(selectedTranscriptHistory.input[0].file._id);
+        // TODO: Add parameters back after signature works fine
         audioRef.current = new Audio(res.data.url.split('?')[0]);
 				audioRef.current.volume = 0.8;
 				console.log("[DEBUG] Retrieved Audio File URL: " + res.data.url);

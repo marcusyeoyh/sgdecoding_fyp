@@ -28,6 +28,7 @@ const DownloadTranscriptButton: React.FC<Props> = ({ transcriptHistory, isDisabl
 
 			let anchor = document.createElement('a');
 			anchor.style.display = 'none';
+      // TODO: Add parameters back after signature works fine
 			anchor.href = url.split('?')[0];
 			//TODO Not working! Can't set the download file name
 			anchor.download = transcriptHistory.title.replace(' ', '_') + ".zip";

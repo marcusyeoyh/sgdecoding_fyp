@@ -125,6 +125,7 @@ async function getTranscriptionInJson(req, res, next) {
       responseType: "json",
     })
     .then((getUrlRes) => {
+      // TODO: Add parameters back after signature works fine
       return axios.get(getUrlRes.data.url.split('?')[0], {
         responseType: "stream",
       });
