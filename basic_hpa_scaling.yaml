@@ -1,0 +1,145 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: backend-hpa
+  namespace: default
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: backend
+  minReplicas: 2
+  maxReplicas: 15
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 45 # Prevents rapid scaling within 60 seconds
+      policies:
+        - type: Percent
+          value: 50 # Increase pods by 50% if threshold is exceeded
+          periodSeconds: 60 # Evaluate scaling every 60 seconds
+        - type: Pods
+          value: 2 # Add a max of 2 pods at a time
+          periodSeconds: 60 # Minimum interval between scale-ups
+      selectPolicy: Min # Takes the most aggressive scale-up policy
+    scaleDown:
+      stabilizationWindowSeconds: 120 # Prevents immediate scale down for 2 minutes
+      policies:
+        - type: Percent
+          value: 25 # Reduce pods by 25% if traffic decreases
+          periodSeconds: 60 # Evaluate scaling every 60 seconds
+        - type: Pods
+          value: 1 # Remove 1 pod at a time
+          periodSeconds: 60 # Minimum interval between scale-downs
+      selectPolicy: Min # Takes the least aggressive scale-down policy
+  metrics:
+    # ✅ CPU Utilization per pod
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70 # Target 70% CPU utilization per pod
+
+    # ✅ Memory Utilization per pod
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 75 # Target 75% Memory utilization per pod
+
+    - type: Object
+      object:
+        describedObject:
+          apiVersion: v1
+          kind: Service
+          name: backend-service
+        metric:
+          name: nginx_requests_auth_login
+        target:
+          type: AverageValue
+          averageValue: 333m
+
+    - type: Object
+      object:
+        describedObject:
+          apiVersion: v1
+          kind: Service
+          name: backend-service
+        metric:
+          name: nginx_requests_speech_history
+        target:
+          type: AverageValue
+          averageValue: 750m
+
+    - type: Object
+      object:
+        describedObject:
+          apiVersion: v1
+          kind: Service
+          name: backend-service
+        metric:
+          name: nginx_requests_speech
+        target:
+          type: AverageValue
+          averageValue: 220m
+
+    - type: Object
+      object:
+        describedObject:
+          apiVersion: v1
+          kind: Service
+          name: backend-service
+        metric:
+          name: nginx_requests_users_statistics
+        target:
+          type: AverageValue
+          averageValue: 300m
+
+    - type: Object
+      object:
+        describedObject:
+          apiVersion: v1
+          kind: Service
+          name: backend-service
+        metric:
+          name: nginx_requests_notes
+        target:
+          type: AverageValue
+          averageValue: 3100m
+
+    - type: Object
+      object:
+        describedObject:
+          apiVersion: v1
+          kind: Service
+          name: backend-service
+        metric:
+          name: nginx_requests_sharedNotes
+        target:
+          type: AverageValue
+          averageValue: 1000m
+
+    - type: Object
+      object:
+        describedObject:
+          apiVersion: v1
+          kind: Service
+          name: backend-service
+        metric:
+          name: nginx_requests_files
+        target:
+          type: AverageValue
+          averageValue: 333m
+
+    - type: Object
+      object:
+        describedObject:
+          apiVersion: v1
+          kind: Service
+          name: backend-service
+        metric:
+          name: nginx_requests_95
+        target:
+          type: Value
+          value: 300m

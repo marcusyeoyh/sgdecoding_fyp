@@ -1,0 +1,77 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: backend-ingress
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "10254"
+
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: a83add0e498624482aea58e7c6947c08-652731971.ap-southeast-1.elb.amazonaws.com
+      http:
+        paths:
+          - path: /auth/login
+            pathType: Exact
+            backend:
+              service:
+                name: backend-service
+                port:
+                  number: 2000
+
+          - path: /users/statistics
+            pathType: Exact
+            backend:
+              service:
+                name: backend-service
+                port:
+                  number: 2000
+
+          - path: /speech/history
+            pathType: Exact
+            backend:
+              service:
+                name: backend-service
+                port:
+                  number: 2000
+
+          - path: /speech
+            pathType: Prefix
+            backend:
+              service:
+                name: backend-service
+                port:
+                  number: 2000
+
+          - path: /notes
+            pathType: Prefix
+            backend:
+              service:
+                name: backend-service
+                port:
+                  number: 2000
+
+          - path: /sharedNotes
+            pathType: Prefix
+            backend:
+              service:
+                name: backend-service
+                port:
+                  number: 2000
+
+          - path: /files
+            pathType: Prefix
+            backend:
+              service:
+                name: backend-service
+                port:
+                  number: 2000
+
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: backend-service
+                port:
+                  number: 2000

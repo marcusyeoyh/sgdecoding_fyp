@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: marcusyeoyh/sgdecoding_frontend_test_amd64:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+          env:
+            - name: FAST_REFRESH
+              value: "false"
+            - name: REACT_APP_API
+              value: "http://localhost:2000"
+            - name: REACT_APP_SOCKETAPI
+              value: "http://localhost:8080"
+            - name: REACT_APP_LIVE_WSS
+              value: "wss://gateway.speechlab.sg"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  selector:
+    app: frontend
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+  type: LoadBalancer

@@ -1,8 +1,9 @@
-version: '3.7'
+version: "3.7"
 
 services:
   backend:
-    image: "abxregistry.azurecr.io/sgdecoding-backend:v1.0"
+    # image: "abxregistry.azurecr.io/sgdecoding-backend:v1.0"
+    image: "marcusyeoyh/sgdecoding_backend_offline:latest"
     ports:
       - "2000:2000"
       - "8080:8080"
@@ -23,7 +24,7 @@ services:
       # DB_CONNECTION_STRING: "mongodb://root:Ln0tT9Vs9c@mongodbv5-0.mongodbv5-headless.speech-gateway.svc.cluster.local:27017/SG_Decoding?authSource=admin&retryWrites=true&w=majority"
     networks:
       - sgdecodenet
-    depends_on: 
+    depends_on:
       - mongodb-app
     links:
       - mongodb-app
@@ -33,13 +34,14 @@ services:
     restart: always
     ports:
       - "27017:27017"
-    volumes:  
+    volumes:
       - mongo:/data/db
     networks:
       - sgdecodenet
 
   frontend:
-    image: "abxregistry.azurecr.io/sgdecoding-frontend:v1.0"
+    # image: "abxregistry.azurecr.io/sgdecoding-frontend:v1.0"
+    image: "marcusyeoyh/sgdecoding_frontend_offline:latest"
     ports:
       - "3000:3000"
     environment:
@@ -48,11 +50,9 @@ services:
       - REACT_APP_LIVE_WSS="wss://gateway.speechlab.sg"
     networks:
       - sgdecodenet
-  
+
 networks:
   sgdecodenet:
     driver: bridge
 volumes:
-  mongo: 
-  
-
+  mongo:

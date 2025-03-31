@@ -1,0 +1,87 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-adapter
+  namespace: monitoring
+data:
+  config.yaml: |
+    rules:
+      - seriesQuery: 'nginx_ingress_controller_requests{path="/auth/login"}'
+        resources:
+          overrides:
+            exported_namespace: {resource: "namespace"}
+            exported_service: {resource: "service"}
+        name:
+          matches: "nginx_ingress_controller_requests"
+          as: "nginx_requests_auth_login"
+        metricsQuery: "sum(rate(nginx_ingress_controller_requests{path='/auth/login',status=~'2..'}[1m])) by (exported_namespace, exported_service)"
+
+      - seriesQuery: 'nginx_ingress_controller_requests{path="/users/statistics"}'
+        resources:
+          overrides:
+            exported_namespace: {resource: "namespace"}
+            exported_service: {resource: "service"}
+        name:
+          matches: "nginx_ingress_controller_requests"
+          as: "nginx_requests_users_statistics"
+        metricsQuery: "sum(rate(nginx_ingress_controller_requests{path='/users/statistics',status=~'2..'}[1m])) by (exported_namespace, exported_service)"
+
+      - seriesQuery: 'nginx_ingress_controller_requests{path="/speech/history"}'
+        resources:
+          overrides:
+            exported_namespace: {resource: "namespace"}
+            exported_service: {resource: "service"}
+        name:
+          matches: "nginx_ingress_controller_requests"
+          as: "nginx_requests_speech_history"
+        metricsQuery: "sum(rate(nginx_ingress_controller_requests{path='/speech/history',status=~'2..'}[1m])) by (exported_namespace, exported_service)"
+
+      - seriesQuery: 'nginx_ingress_controller_requests{path="/speech"}'
+        resources:
+          overrides:
+            exported_namespace: {resource: "namespace"}
+            exported_service: {resource: "service"}
+        name:
+          matches: "nginx_ingress_controller_requests"
+          as: "nginx_requests_speech"
+        metricsQuery: "sum(rate(nginx_ingress_controller_requests{path='/speech',status=~'2..'}[1m])) by (exported_namespace, exported_service)"
+
+      - seriesQuery: 'nginx_ingress_controller_requests{path="/notes"}'
+        resources:
+          overrides:
+            exported_namespace: {resource: "namespace"}
+            exported_service: {resource: "service"}
+        name:
+          matches: "nginx_ingress_controller_requests"
+          as: "nginx_requests_notes"
+        metricsQuery: "sum(rate(nginx_ingress_controller_requests{path='/notes',status=~'2..'}[1m])) by (exported_namespace, exported_service)"
+
+      - seriesQuery: 'nginx_ingress_controller_requests{path="/sharedNotes"}'
+        resources:
+          overrides:
+            exported_namespace: {resource: "namespace"}
+            exported_service: {resource: "service"}
+        name:
+          matches: "nginx_ingress_controller_requests"
+          as: "nginx_requests_sharedNotes"
+        metricsQuery: "sum(rate(nginx_ingress_controller_requests{path='/sharedNotes',status=~'2..'}[1m])) by (exported_namespace, exported_service)"
+
+      - seriesQuery: 'nginx_ingress_controller_requests{path="/files"}'
+        resources:
+          overrides:
+            exported_namespace: {resource: "namespace"}
+            exported_service: {resource: "service"}
+        name:
+          matches: "nginx_ingress_controller_requests"
+          as: "nginx_requests_files"
+        metricsQuery: "sum(rate(nginx_ingress_controller_requests{path='/files',status=~'2..'}[1m])) by (exported_namespace, exported_service)"
+
+      - seriesQuery: 'nginx_ingress_controller_request_duration_seconds_bucket'
+        resources:
+          overrides:
+            exported_namespace: {resource: "namespace"}
+            exported_service: {resource: "service"}
+        name:
+          matches: "nginx_ingress_controller_request_duration_seconds_bucket"
+          as: "nginx_requests_95"
+        metricsQuery: "histogram_quantile(0.95, sum(rate(nginx_ingress_controller_request_duration_seconds_bucket[1m])) by (le, exported_namespace, exported_service))"
